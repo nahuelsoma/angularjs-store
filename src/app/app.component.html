@@ -1,3 +1,107 @@
+<p *ngFor="let item of ['a','b','c']">{{ item }}</p>
+
+<p>{{ [1,2].reverse() }}</p>
+
+<form (ngSubmit)="onRegister()" #myForm="ngForm">
+  <div class="input-group">
+    <label for="name">Name</label>
+    <input type="text" name="name" required id="name" [(ngModel)]="register.name">
+    <p>Error message</p>
+  </div>
+  <div class="input-group">
+    <label for="email">Email</label>
+    <input type="email" name="email" required id="email" [(ngModel)]="register.email">
+    <p>Error message</p>
+  </div>
+  <div class="input-group">
+    <label for="password">Password</label>
+    <input type="password" name="password" required id="password" [(ngModel)]="register.password">
+    <p>Error message</p>
+  </div>
+  <button [disabled]="myForm.invalid" type="submit">Register</button>
+</form>
+
+<hr />
+
+<input type="text" required #nameInput4="ngModel" [(ngModel)]="person.name" />
+<hr class="line-error"
+[ngClass]="{
+  'valid': nameInput4.valid,
+  'invalid': nameInput.invalid
+}"/>
+<p class="message-error" [class.invalid]="nameInput4.invalid">Required field</p>
+
+<div class="styles">
+  <div>
+    <input type="number" [(ngModel)]="box.width" />
+    <input type="number" [(ngModel)]="box.height" />
+    <input type="color" [(ngModel)]="box.background" />
+  </div>
+  <div>
+    <div [ngStyle]="{
+      'width.px': box.width,
+      'height.px': box.height,
+      'background-color': box.background,
+      'display': 'block'
+    }"></div>
+  </div>
+</div>
+
+
+<hr />
+
+<input type="text" required #nameInput2="ngModel" [(ngModel)]="person.name" />
+<p class="message-error" [class.invalid]="nameInput2.invalid">Required field</p>
+
+<label>Name</label>
+<input type="text" required #nameInput3="ngModel" [(ngModel)]="person.name" />
+<p [style.color]="nameInput3.invalid ? 'red' : 'white'">Required field</p>
+
+<input type="number" [(ngModel)]="widthImg" />
+<img [style.width.px]="widthImg" [src]="products[0].image" />
+
+<hr />
+
+<div [ngSwitch]="person.name">
+  <input type="text" [(ngModel)]="person.name" />
+  <p *ngSwitchCase="'john'">
+    This is John
+  </p>
+  <p *ngSwitchCase="'paul'">
+    This is Paul
+  </p>
+  <p *ngSwitchCase="'robert'">
+    This is Robert
+  </p>
+  <p *ngSwitchDefault="">Who are you?</p>
+</div>
+
+<hr />
+
+<div class="products--grid">
+  <div *ngFor="let product of products">
+    <p>{{product.name}}</p>
+    <img [src]="product.image" width="200" [alt]="product.name" />
+    <p>$ {{product.price}}</p>
+    <p>{{product.category}}</p>
+  </div>
+</div>
+
+<hr />
+
+<ul>
+  <li *ngIf="names.length === 0">Add a new name</li>
+  <li *ngFor="let name of names; index as i">
+    {{i+1}} - {{ name }}
+    <button (click)="deleteName(i)">Delete name</button>
+  </li>
+</ul>
+
+<input type="text" required [(ngModel)]="newName" />
+<button (click)="addName()">Add new student</button>
+
+<hr />
+
 <p>Name: {{ person.name }}</p>
 <input type="text" required #nameInput="ngModel" [(ngModel)]="person.name" />
 <p>Valid: {{nameInput.valid}}</p>

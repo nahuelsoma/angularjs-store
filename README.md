@@ -57,7 +57,7 @@ ng serve -o
 Launch the server on a specific port:
 
 ```
-ng serve -o --port=3500
+ng serve --port=3500
 ```
 
 ### Structure of an Angular project
@@ -316,26 +316,374 @@ export class AppComponent {
 
 ## Control structures
 
-## Using \*ngIf
+### Using \*ngIf
 
-## Using \*ngFor
+📖 https://angular.io/api/common/NgIf
 
-## \*ngFor for arrays
+A structural directive that conditionally includes a template based on the value of an expression coerced to Boolean. When the expression evaluates to true, Angular renders the template provided in a then clause, and when false or null, Angular renders the template provided in an optional else clause. The default template for the else clause is blank.
 
-## Using \*ngSwitch
+```html
+<div *ngIf="condition">Content to render when condition is true.</div>
+```
+
+Ejemplo:
+
+```html
+<p *ngIf="person.name === 'Juan' && person.age > 18; else otherBlock">
+  Content to render when condition is true.
+</p>
+<ng-template #otherBlock>
+  <p>Content to render in else conditions</p>
+</ng-template>
+```
+
+### Using \*ngFor
+
+Ejemplo:
+
+```html
+<!-- src/app/app.component.html -->
+
+<ul>
+  <li *ngIf="names.length === 0">Add a new name</li>
+  <li *ngFor="let name of names; index as i">
+    {{i+1}} - {{ name }}
+    <button (click)="deleteName(i)">Delete name</button>
+  </li>
+</ul>
+
+<input type="text" required [(ngModel)]="newName" />
+<button (click)="addName()">Add new student</button>
+```
+
+```ts
+// src/app/app.component.ts
+
+export class AppComponent {
+  names: string[] = ["Juan", "Roberto", "Ana"];
+
+  newName = "";
+
+  addName() {
+    this.names.push(this.newName);
+    this.newName = "";
+  }
+
+  deleteName(index: number) {
+    this.names.splice(index, 1);
+  }
+}
+```
+
+### \*ngFor for arrays
+
+Create an _<object_name>.model.ts_ for object typification.
+
+Example:
+
+```ts
+// src/app/product.model.ts
+
+export interface Product {
+  name: string;
+  price: number;
+  description: string;
+  category?: string;
+}
+```
+
+Then, import it in the component file
+
+```ts
+// src/app/product.model.ts
+
+import { Product } from './product.model';
+...
+
+export class AppComponent {
+  products: Product[] = [
+    {
+      name: 'EL mejor juguete',
+      price: 565,
+      image: 'https://source.unsplash.com/random',
+      category: 'category 2',
+    },
+    {
+      name: 'Bicicleta casi nueva',
+      price: 356,
+      image: 'https://source.unsplash.com/random',
+    },
+    ...
+  ]
+```
+
+Then, use it into the html file:
+
+```html
+<!-- src/app/app.component.html -->
+
+<ul>
+  <div *ngFor="let product of products; index as i">
+    <p>{{product.name}}</p>
+    <p>{{product.price}}</p>
+    <img [src]="product.image" width="200" [alt]="product.name" />
+    <p>{{product.category}}</p>
+  </div>
+</ul>
+```
+
+### Using \*ngSwitch
+
+📖 https://angular.io/api/common/NgSwitch
+
+The _[ngSwitch]_ directive on a container specifies an expression to match against. The expressions to match are provided by ngSwitchCase directives on views within the container.
+
+- Every view that matches is rendered.
+- If there are no matches, a view with the ngSwitchDefault directive is rendered.
+- Elements within the _[NgSwitch]_ statement but outside of any NgSwitchCase or ngSwitchDefault directive are preserved at the location.
+
+Example:
+
+```ts
+// src/app/app.component.ts
+
+export class AppComponent {
+  person = {
+    name: "john",
+  };
+}
+```
+
+```html
+<!-- src/app/app.component.html -->
+
+<div [ngSwitch]="person.name">
+  <input type="text" [(ngModel)]="person.name" />
+  <p *ngSwitchCase="'john'">This is John</p>
+  <p *ngSwitchCase="'paul'">This is Paul</p>
+  <p *ngSwitchCase="'robert'">This is Robert</p>
+  <p *ngSwitchDefault="">Who are you?</p>
+</div>
+```
 
 ## Angular Devtools
+
+🧩 https://chrome.google.com/webstore/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh
 
 ## Styles
 
 ## Styles to the product list
 
+Style can be edited into _app.component.scss_ file
+
+Example:
+
+```html
+<div class="products--grid">
+  <div *ngFor="let product of products">
+    <p>{{product.name}}</p>
+    <p>{{product.price}}</p>
+    <img [src]="product.image" width="200" [alt]="product.name" />
+    <p>{{product.category}}</p>
+  </div>
+</div>
+```
+
+```scss
+.products--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  div {
+    img {
+      width: 100%;
+      border-radius: 1rem;
+    }
+  }
+}
+```
+
 ## Class and style
+
+Example 2: Dynamic style with .scss file
+
+```ts
+// src/app/app.component.ts
+
+export class AppComponent {
+  person = {
+    name: "john",
+  };
+}
+```
+
+```html
+<!-- src/app/app.component.html -->
+
+<input type="text" required #nameInput2="ngModel" [(ngModel)]="person.name" />
+<p class="message-error" [class.invalid]="nameInput2.invalid">Required field</p>
+```
+
+```scss
+// src/app/app.component.scss
+
+.message-error {
+  background-color: red;
+  color: white;
+  opacity: 0;
+  transition: all linear 0.5s;
+  &.invalid {
+    opacity: 1;
+  }
+}
+```
+
+Example 3: Style inline
+
+```html
+<!-- src/app/app.component.html -->
+
+<input type="text" required #nameInput3="ngModel" [(ngModel)]="person.name" />
+<p [style.color]="nameInput3.invalid ? 'red' : 'white'">Required field</p>
+```
+
+Example 4: Edit dinamic image size
+
+```ts
+// src/app/app.component.ts
+
+export class AppComponent {
+  products: Product[] = [
+    {
+      name: "El mejor juguete",
+      price: 565,
+      image: "https://picsum.photos/id/15/250",
+      category: "category 2",
+    },
+  ...
+  ];
+
+  widthImg: number = 100;
+}
+```
+
+```html
+<!-- src/app/app.component.html -->
+
+<input type="number" [(ngModel)]="widthImg" />
+<img [style.width.px]="widthImg" [src]="products[0].image" />
+```
+
+In every case, variables must be defined before usage. If they are not defined, an error will be thrown.
 
 ## NgClass and NgStyle
 
+Using ngClass:
+
+```html
+<!-- src/app/app.component.html -->
+
+<input type="text" required #nameInput4="ngModel" [(ngModel)]="person.name" />
+<hr
+  class="line-error"
+  [ngClass]="{
+  'valid': nameInput4.valid,
+  'invalid': nameInput.invalid
+}"
+/>
+<p class="message-error" [class.invalid]="nameInput4.invalid">Required field</p>
+```
+
+```scss
+// src/app/app.component.scss
+
+.line-error {
+  height: 0;
+  border-bottom: 1px solid;
+  &.invalid {
+    border-color: red;
+  }
+  &.valid {
+    border-color: green;
+  }
+}
+```
+
+Using ngStyle:
+
+```ts
+// src/app/app.component.ts
+
+export class AppComponent {
+  box = {
+    width: 100,
+    height: 100,
+    background: "red",
+  };
+}
+```
+
+```html
+<!-- src/app/app.component.html -->
+
+<div class="styles">
+  <div>
+    <input type="number" [(ngModel)]="box.width" />
+    <input type="number" [(ngModel)]="box.height" />
+    <input type="color" [(ngModel)]="box.background" />
+  </div>
+  <div>
+    <div
+      [ngStyle]="{
+      'width.px': box.width,
+      'height.px': box.height,
+      'background-color': box.background,
+      'display': 'block'
+    }"
+    ></div>
+  </div>
+</div>
+```
+
 ## Creating a form
 
-## Deploy
+```html
+<!-- src/app/app.component.html -->
 
-## Deploy with Firebase Hosting
+<form (ngSubmit)="onRegister()" #myForm="ngForm">
+  <div class="input-group">
+    <label for="name">Name</label>
+    <input
+      type="text"
+      name="name"
+      required
+      id="name"
+      [(ngModel)]="register.name"
+    />
+    <p>Error message</p>
+  </div>
+  <div class="input-group">
+    <label for="email">Email</label>
+    <input
+      type="email"
+      name="email"
+      required
+      id="email"
+      [(ngModel)]="register.email"
+    />
+    <p>Error message</p>
+  </div>
+  <div class="input-group">
+    <label for="password">Password</label>
+    <input
+      type="password"
+      name="password"
+      required
+      id="password"
+      [(ngModel)]="register.password"
+    />
+    <p>Error message</p>
+  </div>
+  <button [disabled]="myForm.invalid" type="submit">Register</button>
+</form>
+```
