@@ -43,8 +43,10 @@ ng new <my-project>
 Run the development server:
 
 ```
-ng serve Inside your project folder.
+ng serve
 ```
+
+Inside your project folder.
 
 ### Angular commands to run your project
 
